@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar Master-Detail View</title>
+    <title>Houston Bike Ride Groups Calendar</title>
     <style>
         /* --- 1. VARIABLES & RESET --- */
         :root {
@@ -13,7 +13,6 @@
             --primary: #4f46e5;
             --primary-light: #e0e7ff;
             --accent: #10b981;
-            --accent-light: #d1fae5;
             --border: #e5e7eb;
             --card-bg: #ffffff;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -31,18 +30,18 @@
             min-height: 100vh;
         }
 
-        /* --- 2. LAYOUT WRAPPER --- */
+        /* --- 2. MAIN LAYOUT WRAPPER --- */
         .app-layout {
             display: flex;
             gap: 24px;
             width: 100%;
             max-width: 1200px;
-            align-items: flex-start;
+            align-items: flex-start; /* Aligns sidebar to top */
         }
 
-        /* --- 3. CALENDAR (Left) --- */
+        /* --- 3. CALENDAR SECTION (Left/Top) --- */
         .calendar-container {
-            flex: 2;
+            flex: 2; /* Takes 2/3 space on desktop */
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
@@ -86,18 +85,21 @@
             padding: 10px;
             cursor: pointer;
             transition: background 0.2s;
+            position: relative;
         }
 
         .day-cell:hover { background: #f9fafb; }
         
+        /* Selected Day Highlight */
         .day-cell.selected-day {
-            background: #eff6ff; 
+            background: #eff6ff; /* Very light blue */
             box-shadow: inset 0 0 0 2px var(--primary);
         }
-        .day-cell.today .date-num { color: var(--primary); font-weight: 800; }
 
         .date-num { font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 6px; display: block;}
-        
+        .day-cell.today .date-num { color: var(--primary); font-weight: 800; }
+
+        /* Small Dot Indicators on Grid (Instead of full badges) to save space */
         .event-dot {
             height: 6px; width: 6px;
             background-color: var(--primary);
@@ -107,53 +109,28 @@
         }
         .event-dot.launch { background-color: var(--accent); }
 
-        /* --- 4. SIDEBAR (Right) - SLIDER CONTAINER --- */
+        /* --- 4. SIDEBAR (Right/Bottom) --- */
         .sidebar {
-            flex: 1;
+            flex: 1; /* Takes 1/3 space on desktop */
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            min-height: 450px;
-            position: sticky;
-            top: 20px;
-            overflow: hidden; /* Key for sliding effect */
-        }
-
-        /* The Track that moves left/right */
-        .sidebar-slider {
-            display: flex;
-            width: 200%;
-            
-            /* --- NEW: FORCE GPU ACCELERATION --- */
-            /* 1. Hints the browser to prepare for movement */
-            will-change: transform; 
-            
-            /* 2. The "Zero Hack" - Forces creation of a new composition layer */
-            transform: translate3d(0, 0, 0); 
-            
-            /* 3. iOS-specific fixes to prevent flickering/stuttering */
-            -webkit-backface-visibility: hidden;
-            -webkit-perspective: 1000;
-            backface-visibility: hidden;
-            
-            /* Keep your existing transition */
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        /* The Two Panels */
-        .view-panel {
-            width: 50%; /* Each panel takes half the track (aka 100% of sidebar) */
             padding: 24px;
-            flex-shrink: 0;
+            min-height: 400px; /* Ensure it looks good even if empty */
+            position: sticky;
+            top: 20px; /* Sticks to top on scroll */
         }
 
-        /* --- PANEL A: LIST VIEW STYLES --- */
-        .sidebar-header { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-        .sidebar-date-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-        
-        /* UPDATED: Matched to .month-title */
-        .sidebar-day-title { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-top: 4px; }
+        .sidebar-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
 
+        .sidebar-date-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;}
+        .sidebar-day-title { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-top: 4px; }
+        
+        /* Event List in Sidebar */
         .events-list { list-style: none; }
         
         .event-card {
@@ -166,44 +143,42 @@
             transition: transform 0.2s, box-shadow 0.2s;
             border-left: 4px solid var(--primary);
         }
+
         .event-card.launch { border-left-color: var(--accent); }
-        .event-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        
+
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
         .event-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
-        .event-time { font-size: 0.85rem; color: var(--text-muted); }
+        .event-time { font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
 
-        .empty-state { text-align: center; color: var(--text-muted); padding: 40px 0; }
-        .empty-icon { font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.5; }
-
-        /* --- PANEL B: DETAILS VIEW STYLES --- */
-        .back-btn {
-            background: none; border: none;
-            display: flex; align-items: center; gap: 8px;
+        .empty-state {
+            text-align: center;
             color: var(--text-muted);
-            font-weight: 600; font-size: 0.9rem;
-            cursor: pointer; margin-bottom: 20px;
-            transition: color 0.2s;
+            padding: 40px 0;
         }
-        .back-btn:hover { color: var(--primary); }
-        
-        .detail-badge {
-            display: inline-block; padding: 4px 10px;
-            border-radius: 6px; font-size: 0.75rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.05em;
-            margin-bottom: 15px;
+        .empty-icon { font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.5;}
+
+        /* --- 5. MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
+            z-index: 1000; opacity: 0; visibility: hidden;
+            transition: 0.3s ease; display: flex; justify-content: center; align-items: center;
         }
-        .detail-badge.meeting { background: var(--primary-light); color: var(--primary); }
-        .detail-badge.launch { background: var(--accent-light); color: var(--accent); }
-
-        .detail-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
-        .detail-time { color: var(--text-muted); font-weight: 500; margin-bottom: 24px; display: flex; align-items: center; gap: 6px; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
         
-        .detail-desc { line-height: 1.6; color: #4b5563; margin-bottom: 20px; }
-        .detail-row { display: flex; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
-        .detail-item { flex: 1; }
-        .detail-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+        .modal-card {
+            background: white; width: 90%; max-width: 450px;
+            border-radius: var(--radius); padding: 30px;
+            transform: scale(0.95); transition: 0.3s ease; position: relative;
+        }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+        .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
 
-        /* RESPONSIVE */
+        /* RESPONSIVE: Stack sidebar below calendar on mobile */
         @media (max-width: 850px) {
             .app-layout { flex-direction: column; }
             .calendar-container, .sidebar { width: 100%; flex: none; }
@@ -223,58 +198,50 @@
                     <button class="nav-btn" id="next-btn">&#8250;</button>
                 </div>
             </div>
-            <div class="calendar-grid" id="calendar-grid"></div>
+            <div class="calendar-grid" id="calendar-grid">
+                </div>
         </div>
 
         <aside class="sidebar">
-            <div class="sidebar-slider" id="slider-track">
-                
-                <div class="view-panel" id="view-list">
-                    <div class="sidebar-header">
-                        <div class="sidebar-date-label" id="sidebar-sub">Select a date</div>
-                        <h2 class="sidebar-day-title" id="sidebar-title">Today</h2>
-                    </div>
-                    <div id="sidebar-content">
-                        </div>
-                </div>
-
-                <div class="view-panel" id="view-details">
-                    <button class="back-btn" id="back-to-list">
-                        <span>&larr;</span> Back to list
-                    </button>
-                    
-                    <div id="details-content">
-                        </div>
-                </div>
-
+            <div class="sidebar-header">
+                <div class="sidebar-date-label" id="sidebar-sub">Select a date</div>
+                <h2 class="sidebar-day-title" id="sidebar-title">Today</h2>
             </div>
+            
+            <div id="sidebar-content">
+                </div>
         </aside>
 
+    </div>
+
+    <div class="modal-overlay" id="event-modal">
+        <div class="modal-card">
+            <button class="close-modal" id="close-btn">&times;</button>
+            <h2 id="modal-title" style="margin-bottom: 15px;">Title</h2>
+            <p id="modal-desc" style="line-height: 1.6; color: #4b5563;"></p>
+        </div>
     </div>
 
     <script>
         // --- VARIABLES ---
         let nav = 0;
-        let selectedDate = new Date();
+        let selectedDate = new Date(); // Default to today
         const calendarGrid = document.getElementById('calendar-grid');
         
         // Sidebar Elements
-        const sliderTrack = document.getElementById('slider-track');
         const sidebarTitle = document.getElementById('sidebar-title');
         const sidebarSub = document.getElementById('sidebar-sub');
         const sidebarContent = document.getElementById('sidebar-content');
-        const detailsContent = document.getElementById('details-content');
-        const backBtn = document.getElementById('back-to-list');
 
-        // Event Data
+        // Event Data (YYYY-MM-DD format)
         const eventData = [
-            { id: 1, date: '2025-11-05', title: "Q4 Strategy Meeting", time: "10:00 AM - 11:30 AM", type: "meeting", location: "Room 404", desc: "Discussing Q4 goals and marketing spend for the upcoming holiday season." },
-            { id: 2, date: '2025-11-20', title: "Design Review", time: "1:00 PM - 2:00 PM", type: "meeting", location: "Zoom", desc: "Reviewing the new dashboard mockups with the product team." },
-            { id: 3, date: '2025-11-20', title: "Team Happy Hour 🍻", time: "5:30 PM", type: "launch", location: "The Local Pub", desc: "Drinks are on the house! Come celebrate the recent release." },
-            { id: 4, date: '2025-12-01', title: "Project Launch", time: "9:00 AM", type: "launch", location: "Auditorium", desc: "Go live date for the new customer portal." }
+            { date: '2025-11-05', title: "Q4 Strategy Meeting", time: "10:00 AM", type: "meeting", desc: "Discussing Q4 goals." },
+            { date: '2025-11-20', title: "Design Review", time: "1:00 PM", type: "meeting", desc: "Reviewing the new dashboard mockups." },
+            { date: '2025-11-20', title: "Team Happy Hour 🍻", time: "5:30 PM", type: "launch", desc: "Drinks at The Local." },
+            { date: '2025-12-01', title: "Project Launch", time: "9:00 AM", type: "launch", desc: "Go live date!" }
         ];
 
-        // --- CALENDAR LOGIC ---
+        // --- FUNCTIONS ---
 
         function loadCalendar() {
             const dt = new Date();
@@ -283,12 +250,14 @@
             const month = dt.getMonth();
             const year = dt.getFullYear();
             
+            // Update Header
             document.getElementById('month-display').innerText = dt.toLocaleDateString('en-us', { month: 'long', year: 'numeric' });
 
             calendarGrid.innerHTML = '';
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const firstDayIndex = new Date(year, month, 1).getDay();
             
+            // Add Weekday Headers
             const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
             weekdays.forEach(d => {
                 const el = document.createElement('div');
@@ -297,28 +266,35 @@
                 calendarGrid.appendChild(el);
             });
 
+            // Padding Days
             for(let i=0; i<firstDayIndex; i++) {
                 const pad = document.createElement('div');
                 pad.classList.add('day-cell');
-                pad.style.background = "#fcfcfc";
+                pad.style.background = "#fcfcfc"; // Dimmed
                 calendarGrid.appendChild(pad);
             }
 
+            // Days
             for(let i=1; i<=daysInMonth; i++) {
                 const cell = document.createElement('div');
                 cell.classList.add('day-cell');
                 
                 const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+
+                // Add Day Number
                 cell.innerHTML = `<span class="date-num">${i}</span>`;
 
+                // Highlight if Selected
                 const selKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,'0')}-${String(selectedDate.getDate()).padStart(2,'0')}`;
                 if(dateKey === selKey) cell.classList.add('selected-day');
                 
+                // Highlight Today
                 const today = new Date();
                 if(i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                     cell.classList.add('today');
                 }
 
+                // Check for events
                 const events = eventData.filter(e => e.date === dateKey);
                 if(events.length > 0) {
                     events.forEach(e => {
@@ -329,36 +305,37 @@
                     });
                 }
 
+                // Click Handler -> Updates Sidebar
                 cell.addEventListener('click', () => {
                     selectedDate = new Date(year, month, i);
-                    loadCalendar();
-                    showListPanel(); // Ensure we are looking at the list
-                    renderSidebarList();
+                    loadCalendar(); // Re-render to move the selection highlight
+                    renderSidebar();
                 });
 
                 calendarGrid.appendChild(cell);
             }
         }
 
-        // --- SIDEBAR LOGIC ---
-
-        // 1. Render the List View
-        function renderSidebarList() {
+        function renderSidebar() {
+            // 1. Format Header
             const fullDateStr = selectedDate.toLocaleDateString('en-us', { weekday: 'long', month: 'long', day: 'numeric' });
             sidebarSub.innerText = selectedDate.getFullYear();
             sidebarTitle.innerText = fullDateStr;
 
+            // 2. Filter Events
             const dateKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,'0')}-${String(selectedDate.getDate()).padStart(2,'0')}`;
             const dayEvents = eventData.filter(e => e.date === dateKey);
 
+            // 3. Render List
             sidebarContent.innerHTML = '';
 
             if(dayEvents.length === 0) {
                 sidebarContent.innerHTML = `
                     <div class="empty-state">
                         <span class="empty-icon">💤</span>
-                        <p>No events scheduled.</p>
-                    </div>`;
+                        <p>No events scheduled for this day.</p>
+                    </div>
+                `;
             } else {
                 const ul = document.createElement('ul');
                 ul.classList.add('events-list');
@@ -373,59 +350,32 @@
                         <div class="event-time">🕒 ${evt.time}</div>
                     `;
                     
-                    // Click Card -> Trigger Slide to Details
-                    li.addEventListener('click', () => showDetailsPanel(evt));
+                    // Click Event Card -> Open Modal
+                    li.addEventListener('click', () => openModal(evt));
                     ul.appendChild(li);
                 });
+                
                 sidebarContent.appendChild(ul);
             }
         }
 
-        // 2. Render the Details View
-        function renderDetails(evt) {
-            detailsContent.innerHTML = `
-                <span class="detail-badge ${evt.type}">${evt.type}</span>
-                <h3 class="detail-title">${evt.title}</h3>
-                <div class="detail-time">🕒 ${evt.time}</div>
-                <p class="detail-desc">${evt.desc}</p>
-                
-                <div class="detail-row">
-                    <div class="detail-item">
-                        <div class="detail-label">Location</div>
-                        <div>${evt.location}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Date</div>
-                        <div>${selectedDate.toLocaleDateString()}</div>
-                    </div>
-                </div>
-            `;
+        // Modal Logic
+        const modal = document.getElementById('event-modal');
+        function openModal(evt) {
+            document.getElementById('modal-title').innerText = evt.title;
+            document.getElementById('modal-desc').innerText = evt.desc;
+            modal.classList.add('active');
         }
+        document.getElementById('close-btn').addEventListener('click', () => modal.classList.remove('active'));
+        modal.addEventListener('click', (e) => { if(e.target===modal) modal.classList.remove('active'); });
 
-        // --- SLIDING VIEW NAVIGATION ---
-
-        function showDetailsPanel(evt) {
-            // 1. Populate data
-            renderDetails(evt);
-            // 2. Slide track to left (-50%)
-            sliderTrack.style.transform = 'translateX(-50%)';
-        }
-
-        function showListPanel() {
-            // Slide track back to 0
-            sliderTrack.style.transform = 'translateX(0)';
-        }
-
-        // Back Button Logic
-        backBtn.addEventListener('click', showListPanel);
-
-        // Calendar Navigation
+        // Nav Logic
         document.getElementById('next-btn').addEventListener('click', () => { nav++; loadCalendar(); });
         document.getElementById('prev-btn').addEventListener('click', () => { nav--; loadCalendar(); });
 
         // Init
         loadCalendar();
-        renderSidebarList();
+        renderSidebar(); // Initial render for "Today"
 
     </script>
 </body>
