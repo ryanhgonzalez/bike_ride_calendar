@@ -122,8 +122,22 @@
         /* The Track that moves left/right */
         .sidebar-slider {
             display: flex;
-            width: 200%; /* Holds two panels side-by-side */
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth slide */
+            width: 200%;
+            
+            /* --- NEW: FORCE GPU ACCELERATION --- */
+            /* 1. Hints the browser to prepare for movement */
+            will-change: transform; 
+            
+            /* 2. The "Zero Hack" - Forces creation of a new composition layer */
+            transform: translate3d(0, 0, 0); 
+            
+            /* 3. iOS-specific fixes to prevent flickering/stuttering */
+            -webkit-backface-visibility: hidden;
+            -webkit-perspective: 1000;
+            backface-visibility: hidden;
+            
+            /* Keep your existing transition */
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         /* The Two Panels */
