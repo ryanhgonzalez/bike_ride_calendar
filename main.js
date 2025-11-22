@@ -13,11 +13,39 @@ const backBtn = document.getElementById('back-to-list');
 
 // Event Data
 const eventData = [
-    { id: 1, date: '2025-11-05', title: "Q4 Strategy Meeting", time: "10:00 AM - 11:30 AM", type: "meeting", location: "Room 404", desc: "Discussing Q4 goals and marketing spend for the upcoming holiday season." },
-    { id: 2, date: '2025-11-20', title: "Design Review", time: "1:00 PM - 2:00 PM", type: "meeting", location: "Zoom", desc: "Reviewing the new dashboard mockups with the product team." },
-    { id: 3, date: '2025-11-20', title: "Team Happy Hour 🍻", time: "5:30 PM", type: "launch", location: "The Local Pub", desc: "Drinks are on the house! Come celebrate the recent release." },
-    { id: 4, date: '2025-12-01', title: "Project Launch", time: "9:00 AM", type: "launch", location: "Auditorium", desc: "Go live date for the new customer portal." }
+    { id: 1, date: "2025-12-01", title: "Winter Warm-Up Ride", time: "9:00 AM", type: "ride", location: "City Trailhead", desc: "Easy-paced ride to kick off the month and shake off cold-weather rust." },
+    { id: 2, date: "2025-12-02", title: "Hill Climb Tuesday", time: "6:00 PM", type: "training", location: "Oakridge Hills", desc: "Group tackles a series of local climbs for strength-building." },
+    { id: 3, date: "2025-12-03", title: "Sunset Social Spin", time: "4:30 PM", type: "social", location: "Riverside Loop", desc: "Short evening ride finishing with hot chocolate at the trailhead." },
+    { id: 4, date: "2025-12-04", title: "Gravel Grinder Thursday", time: "5:00 PM", type: "gravel", location: "Pine Creek Trails", desc: "A 20-mile mixed-terrain ride for gravel bike enthusiasts." },
+    { id: 5, date: "2025-12-05", title: "Night Lights Ride", time: "7:00 PM", type: "night", location: "City Park", desc: "A relaxed night ride—bright lights and reflective gear required." },
+    { id: 6, date: "2025-12-06", title: "Saturday Long Haul", time: "8:00 AM", type: "endurance", location: "County Road Route", desc: "Weekly long-distance endurance ride (40–60 miles)." },
+    { id: 7, date: "2025-12-07", title: "Recovery Coffee Cruise", time: "9:30 AM", type: "social", location: "Bike & Bean Cafe", desc: "Slow social ride ending with a stop for coffee and pastries." },
+    { id: 8, date: "2025-12-08", title: "Commuter Skills Session", time: "6:00 PM", type: "workshop", location: "Community Center", desc: "Learn winter commuting tips, route safety, and cold-weather gear prep." },
+    { id: 9, date: "2025-12-09", title: "Singletrack Tuesday", time: "5:30 PM", type: "mtb", location: "Forest Ridge Trails", desc: "Mountain bikers hit fast, flowy singletrack sections." },
+    { id: 10, date: "2025-12-10", title: "Midweek Tempo Ride", time: "6:00 PM", type: "training", location: "Lakeside Loop", desc: "Steady moderate-speed group ride to build pace consistency." },
+    { id: 11, date: "2025-12-11", title: "Winter Gear Workshop", time: "6:30 PM", type: "workshop", location: "Bike Shop HQ", desc: "Indoor meetup teaching bike maintenance and cold-weather layering." },
+    { id: 12, date: "2025-12-12", title: "Frosty Friday Ride", time: "6:00 PM", type: "ride", location: "Neighborhood Loop", desc: "Casual community ride for all skill levels." },
+    { id: 13, date: "2025-12-13", title: "Weekend Climbing Challenge", time: "8:00 AM", type: "training", location: "Summit Ridge", desc: "Riders attempt a cumulative elevation goal together." },
+    { id: 14, date: "2025-12-14", title: "Family & Kids Bike Day", time: "10:00 AM", type: "family", location: "Central Park Loop", desc: "Kid-friendly loop with safety demos and activities." },
+    { id: 15, date: "2025-12-15", title: "Urban Exploration Ride", time: "6:00 PM", type: "ride", location: "Downtown Plaza", desc: "Discover lesser-known bike-friendly routes around the city." },
+    { id: 16, date: "2025-12-16", title: "Lakeside Sunrise Cruise", time: "6:30 AM", type: "scenic", location: "Lakeshore Path", desc: "Early morning scenic ride along the waterfront." },
+    { id: 17, date: "2025-12-17", title: "Midweek MTB Skills Clinic", time: "5:30 PM", type: "mtb", location: "Trailside Park", desc: "Focus on cornering, braking, and control on dirt trails." },
+    { id: 18, date: "2025-12-18", title: "Bikepacking 101 Night", time: "6:00 PM", type: "workshop", location: "Adventure Hub", desc: "Intro session covering gear, route planning, and overnight tips." },
+    { id: 19, date: "2025-12-19", title: "Winter Solstice Ride (Early Edition)", time: "5:00 PM", type: "ride", location: "Old Mill Loop", desc: "Celebrating the approaching longest night with a festive group ride." },
+    { id: 20, date: "2025-12-20", title: "Saturday Scenic 50", time: "8:00 AM", type: "endurance", location: "Country Roads", desc: "Beautiful countryside route, moderate pace, no-drop policy." },
+    { id: 21, date: "2025-12-21", title: "Solstice Night Ride", time: "7:00 PM", type: "night", location: "Riverfront Path", desc: "Special nighttime group ride with holiday lights and music." },
+    { id: 22, date: "2025-12-22", title: "Icebreaker Intervals", time: "6:00 PM", type: "training", location: "Track Oval", desc: "Short high-intensity interval session for performance-focused riders." },
+    { id: 23, date: "2025-12-23", title: "Charity Toy Delivery Ride", time: "5:00 PM", type: "charity", location: "Community Center", desc: "Riders deliver toys or donations by bike to a local shelter." },
+    { id: 24, date: "2025-12-24", title: "Christmas Eve Ride", time: "3:00 PM", type: "holiday", location: "City Park", desc: "Relaxed festive ride—holiday decorations encouraged." },
+    { id: 25, date: "2025-12-25", title: "Christmas Day Mini Spin", time: "10:00 AM", type: "holiday", location: "Neighborhood Loop", desc: "Optional low-mileage social ride for anyone looking to stay active." },
+    { id: 26, date: "2025-12-26", title: "Boxing Day Trail Ride", time: "9:00 AM", type: "mtb", location: "Woodland Trails", desc: "Post-holiday mountain bike ride through wooded trails." },
+    { id: 27, date: "2025-12-27", title: "End-of-Year Mileage Push", time: "8:30 AM", type: "endurance", location: "County Loop", desc: "Group ride aimed at helping riders hit their yearly mileage goals." },
+    { id: 28, date: "2025-12-28", title: "Bike & Brunch", time: "9:00 AM", type: "social", location: "Harbor Loop", desc: "Short morning ride followed by a group brunch." },
+    { id: 29, date: "2025-12-29", title: "Cold Weather Endurance Test", time: "8:00 AM", type: "endurance", location: "Frostline Route", desc: "Longer, slower, steady conditioning ride in cold weather." },
+    { id: 30, date: "2025-12-30", title: "Tune-Up & Tech Night", time: "6:00 PM", type: "workshop", location: "Bike Shop HQ", desc: "Indoor workshop on drivetrain care and winter lubrication." },
+    { id: 31, date: "2025-12-31", title: "New Year’s Eve Celebration Ride", time: "5:00 PM", type: "holiday", location: "City Plaza", desc: "Festive end-of-year group ride ending with sparkling cider." }
 ];
+
 
 // --- CALENDAR LOGIC ---
 
@@ -160,8 +188,7 @@ function showDetailsPanel(evt) {
         shareBtn.addEventListener('click', async () => {
             const shareData = {
                 title: evt.title,
-                text: `Event: ${evt.title}\nTime: ${evt.time}\nLocation: ${evt.location}\n\n${evt.desc}`,
-                url: window.location.href
+                text: `Event: ${evt.title}\nTime: ${evt.time}\nLocation: ${evt.location}\n\n${evt.desc}\n\n${window.location.href}`
             };
 
             try {
