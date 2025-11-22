@@ -143,7 +143,8 @@ function renderDetails(evt) {
                 <div class="detail-label">Date</div>
                 <div>${selectedDate.toLocaleDateString()}</div>
             </div>
-        </div>
+        </div> 
+        <button id="share-btn" class="share-btn">Share Event</button>
     `;
 }
 
@@ -152,7 +153,30 @@ function renderDetails(evt) {
 function showDetailsPanel(evt) {
     // 1. Populate data
     renderDetails(evt);
-    // 2. Slide track to left (-50%)
+    
+    // 2. Add Share Logic
+    const shareBtn = document.getElementById('share-btn');
+    if(shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+            const shareData = {
+                title: evt.title,
+                text: `Event: ${evt.title}\nTime: ${evt.time}\nLocation: ${evt.location}\n\n${evt.desc}`,
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    alert('Share feature not supported on this device/browser.');
+                }
+            } catch (err) {
+                console.error('Error sharing:', err);
+            }
+        });
+    }
+
+    // 3. Slide track to left (-50%)
     sliderTrack.style.transform = 'translateX(-50%)';
 }
 

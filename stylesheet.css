@@ -188,3 +188,26 @@ body {
     .calendar-container, .sidebar { width: 100%; flex: none; }
     .day-cell { min-height: 60px; }
 }
+
+/* --- SHARE BUTTON --- */
+.share-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 24px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    text-align: center;
+}
+.share-btn:hover {
+    background-color: #4338ca;
+}
+.share-btn:active {
+    transform: scale(0.98);
+}
